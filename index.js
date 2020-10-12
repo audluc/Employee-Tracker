@@ -132,7 +132,7 @@ function addEmployee() {
   connection.query("SELECT * FROM employee", function (error, result) {
     if (error) throw error;
     const employee = result.map(function (emp) {
-      return { value: emp.role, name: emp.name };
+      return { value: emp.name, emp:role };
     });
     inquirer
       .prompt([
@@ -150,6 +150,12 @@ function addEmployee() {
           type: "input",
           message: "What is your role?",
           name: "role",
+        },
+        {
+          type: "list",
+          choices: employee,
+          message: "Who is your current Manager?",
+          name: "employee_manager",
         },
       ])
       .then(function (answers) {
