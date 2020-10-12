@@ -40,8 +40,12 @@ function start() {
           return viewDepartment();
         case "add role":
           return addRole();
-          case "view roles":
-            return viewRole();  
+        case "view roles":
+          return viewRole();
+        case "view all employees":
+          return viewAllEmployees();
+        case "add Employee":
+          return addEmployee();
         default:
           return process.exit();
       }
@@ -115,7 +119,54 @@ function addRole() {
   });
 }
 function viewRole() {
-  connection.query("SELECT * FROM role LEFT JOIN department ON role.department_id = department.id", function (error, result) {
+  connection.query(
+    "SELECT * FROM role LEFT JOIN department ON role.department_id = department.id",
+    function (error, result) {
+      if (error) throw error;
+      console.table(result);
+      connection.end();
+    }
+  );
+}
+function addEmployee() {
+  connection.query("SELECT * FROM employee", function (error, result) {
+    if (error) throw error;
+    const employee = result.map(function (emp) {
+      return { value: emp.role, name: emp.name };
+    });
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is your first name?",
+          name: "first_name",
+        },
+        {
+          type: "input",
+          message: "What is your last name?",
+          name: "last_name",
+        },
+        {
+          type: "input",
+          message: "What is your role?",
+          name: "role",
+        },
+      ])
+      .then(function (answers) {
+        console.log(answers);
+        connection.query("INSERT INTO employee SET ?", answers, function (
+          error,
+          result
+        ) {
+          if (error) throw error;
+          console.log("employee created");
+          connection.end();
+        });
+      });
+  });
+}
+function viewAllEmployees() {
+  connection.query("SELECT * FROM employee", function (error, result) {
     if (error) throw error;
     console.table(result);
     connection.end();
