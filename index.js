@@ -44,7 +44,7 @@ function start() {
           return viewRole();
         case "view all employees":
           return viewAllEmployees();
-        case "add Employee":
+        case "add employee":
           return addEmployee();
         default:
           return process.exit();
@@ -129,50 +129,74 @@ function viewRole() {
   );
 }
 function addEmployee() {
-  connection.query("SELECT * FROM employee", function (error, result) {
+  connection.query("Select * FROM department", function (error, result) {
     if (error) throw error;
-    const employee = result.map(function (emp) {
-      return { value: emp.name, emp:role };
+    const departments = result.map(function (dep) {
+      return { value: dep.id, name: dep.name };
     });
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          message: "What is your first name?",
-          name: "first_name",
-        },
-        {
-          type: "input",
-          message: "What is your last name?",
-          name: "last_name",
-        },
-        {
-          type: "input",
-          message: "What is your role?",
-          name: "role",
-        },
-        {
-          type: "list",
-          choices: employee,
-          message: "Who is your current Manager?",
-          name: "employee_manager",
-        },
-      ])
-      .then(function (answers) {
-        console.log(answers);
-        connection.query("INSERT INTO employee SET ?", answers, function (
-          error,
-          result
-        ) {
-          if (error) throw error;
-          console.log("employee created");
-          connection.end();
-        });
+    connection.query("SELECT * FROM employee", function (error, result) {
+      if (error) throw error;
+      const manager = result.map(function (emp) {
+        return { value: emp.id, name: emp.first_name + " " + emp.last_name };
       });
+      manager.push({
+        value: null,
+        name: "No Manager",
+      });
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "What is your first name?",
+            name: "first_name",
+          },
+          {
+            type: "input",
+            message: "What is your last name?",
+            name: "last_name",
+          },
+          {
+            type: "list",
+            message: "What is your role?",
+            choices: departments,
+            name: "role_id",
+          },
+          {
+            type: "list",
+            choices: manager,
+            message: "Select employee Manager?",
+            name: "manager_id",
+          },
+        ])
+        .then(function (answers) {
+          console.log(answers);
+          connection.query("INSERT INTO employee SET ?", answers, function (
+            error,
+            result
+          ) {
+            if (error) throw error;
+            console.log("employee created");
+            connection.end();
+          });
+        });
+    });
   });
 }
 function viewAllEmployees() {
-  connection.query("SELECT * FROM employee", function (error, result) {
+  const sqlquery = `
+  SELECT 
+  employee.id,
+  employee.first_name AS 'First Name',
+  employee.last_name AS 'Last Name',
+  role.title AS Title,
+  department.name AS Department,
+  IFNULL(CONCAT(manager.first_name, ' ', manager.last_name),'No Worries')
+  AS manager FROM employee
+  LEFT JOIN role ON employee.role_id=role.id
+  LEFT JOIN department ON role.department_id=department.id
+  LEFT JOIN employee manager ON employee.manager_id=manager.id
+  `;
+  connection.query(sqlquery, function (error, result) {
     if (error) throw error;
     console.table(result);
     connection.end();
