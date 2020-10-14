@@ -11,7 +11,6 @@ Design the following database schema containing three tables:
 * **department**:
 
   * **id** - INT PRIMARY KEY
-  * **name** - VARCHAR(30) to hold department name
 
 * **role**:
 
@@ -130,6 +129,7 @@ We would like you to have well over 200 commits by graduation, so commit early a
 You are required to submit the following:
 
 * The URL of the GitHub repository
+https://github.com/audluc/Employee-Tracker
 
 * A video demonstrating the entirety of the app's functionality 
 
