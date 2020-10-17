@@ -40,6 +40,8 @@ So that I can organize and plan my business
 https://github.com/audluc/Employee-Tracker
 
 * A video demonstrating the entirety of the app's functionality 
+https://drive.google.com/file/d/1H_PGRS0_i02UQoH_xKU9U3BL5Gs2f2vL/view
+
 
 - - -
 © 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
